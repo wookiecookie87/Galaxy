@@ -1,0 +1,137 @@
+<script type="text/javascript" src="/static/bower_components/jquery/dist/jquery.min.js"></script>
+<link rel="stylesheet" href="/static/css/bench.css">
+
+<div class="body">
+    <div class="bench">
+        <div class="bench-01-tit">
+            <h1>Finding Galctic Warps</h1>
+            <p>
+            	Indeed, the purpose of an encyclopedia is to collect knowledge disseminated around the globe;<br>
+				to set forth its general system to the men with whom we live, and transmit it to those who will come
+			</p>
+        </div>
+<!--            <div style="clear:both"></div>-->
+        <div class="bench-01-content">
+            <div class="bench-01-01">
+                How Do i use it? 
+            </div>
+            <div class="bench-01-02">
+                Several data  : <span id="graph-num"> {{graph_num}}</span> / {{graph_count}}
+            </div>
+            <div class="bench-01-con">
+                <div class="bench-01-03">
+                	<div class="data-img" id="distance-graph" style="background: url('/static/data_image/{{distance_graph}}') no-repeat -55px -15px; background-size: 435px">
+                		<div class="click-cover">
+                			<div class="cover-wrap">
+                			</div>
+                		</div>
+                	</div>
+
+                	<!-- <img class="data-img" src="/static/data_image/{{distance_graph}}"/> -->
+                </div>
+                <div class="bench-01-04">
+                	<div class="data-img" id="galax-image" style="background: url('/static/data_image/{{galaxy_image}}') no-repeat -255px -150px"></div>
+                	<!-- <img class="data-img" src="/static/data_image/{{galaxy_image}}"/> -->
+                </div>
+            </div>
+            <div class="bench-01-05">
+                Do you want to save the settings for this graph?
+            </div>
+            <div class="bench-btn">
+                <button type="button" class="btn-save">Save</button>
+                <button type="button" class="btn-skip">Skip</button>
+                <button type="button" class="btn-retry">Retry</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+var graph_file; 
+var graph_num;
+var graph_count;
+var points = [];	
+$(function(){
+	$(".btn-skip").on("click", function(){
+		$(".cover-wrap").empty();
+		if(!graph_file){
+			graph_file = "{{image_file}}";
+			graph_num = "{{graph_num}}";
+			graph_count = "{{graph_count}}";
+		}
+
+		var url = "/galaxy/"+graph_file+"/"+graph_num+"/"+graph_count;
+		$.ajax({
+			type: "GET",
+			url: url,
+			dataType: "json",
+			success: function(data){
+				console.log(data);
+				$("#distance-graph").css("background", "url('/static/data_image/"+data.distance_graph+"') no-repeat -55px -15px");
+				$("#distance-graph").css("background-size", "435px");
+				$("#graph-num").html(data.graph_num);
+				graph_file = data.image_file;
+				graph_num = data.graph_num;
+				graph_count = data.graph_count;
+
+			}
+		});
+	});
+
+	$(".btn-save").on("click", function(){
+		if(!graph_file){
+			graph_file = "{{image_file}}";
+			graph_num = "{{graph_num}}";
+			graph_count = "{{graph_count}}";
+		}
+
+		if($(".marker").length < 2){
+			alert("You must pick 2 highest points.")
+			return ;
+		}
+
+		if(parseInt(graph_num) == parseInt(graph_count)){
+			$(".btn-save").attr("disabled", "disabled");
+			location.href = "/galaxy";
+			return ;
+		}
+		
+		var url = "/galaxy/"+graph_file+"/"+graph_num+"/"+graph_count+"/action";
+		$.ajax({
+			type: "GET",
+			url: url,
+			//data: {points : JSON.stringify(points)},
+			dataType: "json",
+			success: function(data){
+				console.log(data);
+				$("#distance-graph").css("background", "url('/static/data_image/"+data.distance_graph+"') no-repeat -55px -15px");
+				$("#distance-graph").css("background-size", "435px");
+				$("#graph-num").html(data.graph_num);
+				graph_file = data.image_file;
+				graph_num = data.graph_num;
+				graph_count = data.graph_count;
+			}
+		});
+		$(".cover-wrap").empty();
+	});
+
+	$(".cover-wrap").on("click", function(e){
+		if($(".marker").length >= 2){
+			alert("You can only pick 2 highest points.")
+			return ;
+		}
+		var posX = $(".cover-wrap").offset().left;
+		var posY = $(".cover-wrap").offset().top;
+		var xPoint = e.pageX - posX;
+		var yPoint = e.pageY - posY;
+		var point = {x: xPoint, y: yPoint };
+		points.push(point);
+		var marker = '<div class="marker" style="width: 10px; height: 10px; border:1px solid black; border-radius: 10px;background: yellow;position: absolute; top:'+(yPoint-5)+';left:'+(xPoint-5)+'"></div>';
+		$(".cover-wrap").append(marker);
+	});
+
+	$(".btn-retry").on("click", function(){
+		$(".cover-wrap").empty();
+	})
+});
+</script>

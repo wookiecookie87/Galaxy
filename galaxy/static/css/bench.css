@@ -1,0 +1,278 @@
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300italic,300,400italic,600,600italic,700,700italic,800,800italic);
+
+body {
+    background-color: #152846;
+    font-family: 'Open Sans', sans-serif;;
+}
+
+.body {
+    background-color: #152846;
+/*
+    background-image: url(../image/static_about_bg.png);
+    background-repeat: no-repeat;
+    background-position: 50% 290px;
+*/
+    text-align: center;
+    padding-top: 75px;
+}
+
+h1 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #44444c;
+}
+
+.bench {
+    width: 700px;
+    height: 690px;
+    background-color: #dcdddf;
+    margin: 0 auto;
+    padding: 14px 21px;
+}
+
+.report-tit {
+    width: 658px;
+    height:69px;
+    text-align: left;
+    padding-top: 11px;
+    padding-left: 12px;
+    padding-bottom: 5px;
+    float: left;
+    margin: 0 auto;
+    font-weight: 600;
+    color: #44444c;
+    font-size: 18px;
+}
+
+.report-tit-02 {
+    width: 200px;
+    height: 54px;
+    text-align: right;
+    float: right;
+}
+
+.report-content {
+    padding-top: 20px;
+    border-top: 1px solid #818284 ;
+    color: #44444c;
+}
+
+.report-content ul {
+    list-style: none;
+    text-align: left;
+    padding-left: inherit;
+}
+
+.report-content li {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.title-01 {
+    padding-bottom: 10px;
+}
+
+span {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.bench-01-tit {
+    width: 658px;
+    height: 105px;
+    margin-bottom: 14px;
+    background: linear-gradient(to top, #e7e8ea, #f9fbfa);
+    border-radius: 5px;
+    text-align: left;
+    padding-left: 17px;
+    padding-top: 3px;
+}
+
+.bench-01-tit p {
+    font-size: 11px;
+    font-weight: 700;
+    color: #354584;
+}
+
+.bench-01-content {
+    padding-top: 7px;
+    border-top: 1px solid #818284;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.bench-01-content span {
+    margin-left: 16px;
+}
+
+.bench-01-01 {
+    width: 354px;
+    text-align: left;
+    display: inline-block;
+}
+
+.bench-01-02 {
+    width: 300px;
+    text-align: right;
+    display: inline-block;
+    padding-right: 16px;
+}
+
+.bench-01-con{
+    width: 658px;
+}
+
+.bench-01-03 {
+    width: 323px;
+    height: 334px;
+    border-radius: 5px;
+    display: inline-block;
+    margin-right: 8px;
+    margin-top: 8px;
+    vertical-align: top;
+}
+
+.bench-01-04 {
+    width: 323px;
+    height: 334px;
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+    margin-top: 8px;
+}
+
+.bench-01-05 {
+    font-weight: 600;
+    font-size: 12px;
+    text-align: left;
+    padding-top: 6px;
+}
+
+.bench-btn {
+    text-align: left;
+    margin-top: 10px;
+    font-size: 11px;
+}
+
+.btn-save {
+    width: 66px;
+    height: 24px;
+    background: linear-gradient(to top, #0c8c59, #02ae60);
+    color: white;
+    border: 0;
+    border-radius: 6px;
+    margin-right: 12px;
+}
+
+.btn-skip {
+    width: 66px;
+    height: 24px;
+    background: linear-gradient(to top, #e3cc42, #f2e17a);
+    color: white;
+    border: 0;
+    border-radius: 6px;
+    margin-right: 12px;
+}
+
+.btn-retry {
+    width: 66px;
+    height: 24px;
+    background: linear-gradient(to top, #c23339, #e04337);
+    color: white;
+    border: 0;
+    border-radius: 6px;
+}
+
+.bench-04-abs {
+    position: absolute;
+    left: 84px;
+    bottom: 20px;
+}
+.bench-01-04-tbn {
+    width: 155px;
+    height: 31px;
+    background: linear-gradient(to top, #b2b2b2, #e6e9f2);
+    border: 0;
+    border-radius: 4px;
+    position: relative;
+    box-shadow: 0px 0px 18px -2px #000;
+}
+
+.bench-04-abs li {
+    list-style: none;
+    position: absolute;
+    display:inline-block; 
+    font-size: 10px;
+}
+
+.li_01 {
+    top: 7px;
+    left: 9px;
+}
+
+.li_02 {
+    top: 9px;
+    left: 26px;
+}
+
+.li_03 {
+    top: 9px;
+    right: 26px;
+}
+
+.li_04 {
+    top: 7px;
+    right: 9px;
+}
+
+.bench-02 {
+    width: 658px;
+    height: 326px;
+    background-image: url(../image/bench_02_bg.png);
+    background-size: 658px auto;
+    border-radius: 0px 0px 6px 6px;
+    margin-top: 8px;
+    position: relative;
+}
+
+.bench-02-con {
+    width: 658px;
+    height: 80px;
+    background: rgba(0,0,0,.5);
+    position: absolute;
+    top: 122px;
+    color: white;
+    padding-top: 16px;
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.bench-02-con span {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.data-img {
+    width: 300px;
+    height: 300px;
+}
+
+#distance-graph {
+    position: relative;
+}
+
+.click-cover {
+    width: 300px;
+    height: 260px;
+    position: absolute;
+    left: 0;
+    top: 18px;
+    z-index: 1;
+    position: relative;
+}
+
+.cover-wrap {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
