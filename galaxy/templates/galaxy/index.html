@@ -115,6 +115,10 @@ $(function(){
 		$(".cover-wrap").empty();
 	});
 
+	$(".marker").on("click", function(){
+		this.remove();
+	});
+
 	$(".cover-wrap").on("click", function(e){
 		if($(".marker").length >= 2){
 			alert("You can only pick 2 highest points.")
@@ -124,7 +128,7 @@ $(function(){
 		var posY = $(".cover-wrap").offset().top;
 		var xPoint = e.pageX - posX;
 		var yPoint = e.pageY - posY;
-		var point = {x: xPoint, y: yPoint };
+		var point = {x: xPoint, y: yPoint};
 		points.push(point);
 		var marker = '<div class="marker" style="width: 10px; height: 10px; border:1px solid black; border-radius: 10px;background: yellow;position: absolute; top:'+(yPoint-5)+';left:'+(xPoint-5)+'"></div>';
 		$(".cover-wrap").append(marker);

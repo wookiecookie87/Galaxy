@@ -132,8 +132,8 @@ def next(request, image_file, graph_num, graph_count):
 def actionData(request, image_file, graph_num, graph_count):
 	galaxy_image = image_file+"/galaxy_rgb.png"
 	distance_graph = image_file+'/distance_graph_'+str(graph_num)+".png"
-	
 	#points = json.loads(request.POST.get('points'))
+	#print(prints);
 
 	context = {
 		'galaxy_image' : galaxy_image,
