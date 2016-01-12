@@ -54,11 +54,19 @@ def draw_dgree_distance(n, ctr, ct):
 
 def createGraph(ctr, saveUrl):
 	ct = get_center(ctr)
+	y_axis_min = []
+	y_axis_max = []
+	graph_name = []
 	for i in range(len(ctr.allsegs)):
 		draw_dgree_distance(i, ctr, ct);
-		plt.savefig(saveUrl + "/distance_graph_"+str(i)+".png");
+		graph_num = "/distance_graph_"+str(i)
+		plt.savefig(saveUrl + graph_num + ".png");
+		axes = plt.gca()
 		clearPlot(plt)
-# plt.show();
+		graph_name.append(graph_num)
+		y_axis_min.append(axes.get_ylim()[0])
+		y_axis_max.append(axes.get_ylim()[1])
+	return {"y_min" : y_axis_min, "y_max" : y_axis_max, "graph_name" : graph_name}
 
 
 
@@ -74,8 +82,11 @@ def computeData(saveUrl, fileUrl):
 	plt.imshow(data);
 	plt.savefig(saveUrl + "/galaxy_rgb.png");
 	clearPlot(plt)
-	createGraph(ctr, saveUrl)
-	return len(ctr.allsegs)
+	graph_info = createGraph(ctr, saveUrl)
+	y_min = graph_info["y_min"]
+	y_max = graph_info["y_max"]
+	graph_name = graph_info["graph_name"]
+	return {"len" : len(ctr.allsegs), "graph_name" : graph_name, "y_min" : y_min, "y_max" : y_max}
 
 def index(request):
 	CURR_PATH = os.path.dirname(os.path.realpath(__file__))
@@ -86,7 +97,6 @@ def index(request):
 	# 	image.save()
 	randNum = randint(3224, 4692)
 	image_file = Galaxy_Image.objects.get(id=randNum).file_name
-	#file_name = image_file+".fits"
 	file_url = data_path+"/"+image_file+".fits"
 	save_url = CURR_PATH+"/static/data_image/"+image_file
 	graph_count = 0
@@ -95,9 +105,14 @@ def index(request):
 		print("it is already computed")
 	else:
 		print(save_url)
-		graph_count = computeData(save_url, file_url)
-		graph = Graph_Info(file_name=image_file, graph_count=graph_count)
-		graph.save()
+		graph_info = computeData(save_url, file_url)
+		y_min = graph_info["y_min"]
+		y_max = graph_info["y_max"]
+		graph_name = graph_info["graph_name"]
+		graph_count = graph_info["len"]
+		for i in range(graph_info["len"]):
+			graph = Graph_Info(file_name=image_file, graph_count=graph_count, graph_name=graph_name[i], y_min=y_min[i], y_max=y_max[i])
+			graph.save()
 	
 	galaxy_image = image_file+"/galaxy_rgb.png"
 	distance_graph = image_file+"/distance_graph_0.png"
@@ -109,10 +124,6 @@ def index(request):
 		'graph_count' : graph_count
 	}
 
-	# latest_question_list = Question.objects.order_by('-pub_date')[:5]
-	# context = {
-	# 	'latest_question_list' : latest_question_list,
-	# }
 	return render(request, 'galaxy/index.html', context)
 
 
@@ -129,11 +140,13 @@ def next(request, image_file, graph_num, graph_count):
 	}
 	return HttpResponse(json.dumps(context), content_type="application/json")
 
-def actionData(request, image_file, graph_num, graph_count):
+def actionData(request, image_file, graph_num, graph_count, point_1_x, point_1_y, point_2_x, point_2_y):
 	galaxy_image = image_file+"/galaxy_rgb.png"
-	distance_graph = image_file+'/distance_graph_'+str(graph_num)+".png"
-	#points = json.loads(request.POST.get('points'))
-	#print(prints);
+	graph_name = '/distance_graph_'+str(graph_num);
+	distance_graph = image_file+graph_name+".png"
+	graph_data = Graph_Info.objects.filter(file_name = image_file, graph_name = graph_name)
+	if graph_data:
+		print(graph_data.y_min)
 
 	context = {
 		'galaxy_image' : galaxy_image,

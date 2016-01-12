@@ -57,9 +57,14 @@ $(function(){
 		var graph_count = "{{graph_count}}";
 		Graph.clearGraph();
 
-		
 		if(!Graph.graph_file){
 			Graph.setData(graph_file, graph_num, graph_count)
+		}
+
+		if(parseInt(Graph.graph_num) == parseInt(Graph.graph_count)){
+			$(".btn-skip").attr("disabled", "disabled");
+			location.href = "/galaxy";
+			return ;
 		}
 
 		Graph.callNext();
@@ -78,7 +83,12 @@ $(function(){
 			alert("You must pick 2 highest points.");
 			return ;
 		}
-		Graph.checkGraph();	
+
+		if(parseInt(Graph.graph_num) == parseInt(Graph.graph_count)){
+			$(".btn-save").attr("disabled", "disabled");
+			location.href = "/galaxy";
+			return ;
+		}
 		Graph.callSave();
 
 		Graph.clearGraph();
