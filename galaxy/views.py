@@ -1,9 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 import json
+import math
 
 from .models import Galaxy_Image
 from .models import Graph_Info
+from .models import Action_Info
 from os import listdir
 from django.conf import settings
 from random import randint
@@ -89,6 +91,53 @@ def computeData(saveUrl, fileUrl):
 	return {"len" : len(ctr.allsegs), "graph_name" : graph_name, "y_min" : y_min, "y_max" : y_max}
 
 def index(request):
+	# CURR_PATH = os.path.dirname(os.path.realpath(__file__))
+	# data_path = os.path.dirname(os.path.realpath(__file__))+"/data"
+	# for f in listdir(CURR_PATH+"/data"):
+	# 	fileName = f.split(".")
+	# 	image = Galaxy_Image(file_name = fileName[0], computed = "false")
+	# 	image.save()
+	# randNum = randint(3224, 4692)
+	# image_file = Galaxy_Image.objects.get(id=randNum).file_name
+	# file_url = data_path+"/"+image_file+".fits"
+	# save_url = CURR_PATH+"/static/data_image/"+image_file
+	# graph_count = 0
+	# y_min = 0.0
+	# y_max = 0.0
+	# if(Graph_Info.objects.filter(file_name=image_file)):
+	# 	print("it is already computed")
+	# else:
+	# 	print(save_url)
+	# 	graph_info = computeData(save_url, file_url)
+	# 	y_min = graph_info["y_min"]
+	# 	y_max = graph_info["y_max"]
+	# 	graph_name = graph_info["graph_name"]
+	# 	graph_count = graph_info["len"]
+	# 	for i in range(graph_info["len"]):
+	# 		print("graph_name = "+graph_name[i]+"y_min = " + str(y_min[i])+"y_max = "+ str(y_max[i]))
+	# 		graph = Graph_Info(file_name=image_file, graph_count=graph_count, graph_name=graph_name[i], y_min=y_min[i], y_max=y_max[i])
+	# 		graph.save()
+	
+	# galaxy_image = image_file+"/galaxy_rgb.png"
+	# graph_name = "/distance_graph_0"
+	# distance_graph = image_file+graph_name+".png"
+	# graph_data = Graph_Info.objects.get(file_name = image_file, graph_name = graph_name)
+	# y_min = float(graph_data.y_min)
+	# y_max = float(graph_data.y_max)
+	context = {
+		# 'galaxy_image' : galaxy_image,
+		# 'distance_graph' : distance_graph,
+		# 'image_file' : image_file,
+		# 'graph_num' : 1,
+		# 'graph_count' : graph_count,
+		# 'y_min' : y_min,
+		# 'y_max' : y_max
+	}
+
+	return render(request, 'galaxy/index.html', context)
+
+
+def loadData(request):
 	CURR_PATH = os.path.dirname(os.path.realpath(__file__))
 	data_path = os.path.dirname(os.path.realpath(__file__))+"/data"
 	# for f in listdir(CURR_PATH+"/data"):
@@ -100,7 +149,8 @@ def index(request):
 	file_url = data_path+"/"+image_file+".fits"
 	save_url = CURR_PATH+"/static/data_image/"+image_file
 	graph_count = 0
-
+	y_min = 0.0
+	y_max = 0.0
 	if(Graph_Info.objects.filter(file_name=image_file)):
 		print("it is already computed")
 	else:
@@ -115,28 +165,39 @@ def index(request):
 			graph.save()
 	
 	galaxy_image = image_file+"/galaxy_rgb.png"
-	distance_graph = image_file+"/distance_graph_0.png"
+	graph_name = "/distance_graph_0"
+	distance_graph = image_file+graph_name+".png"
+	graph_data = Graph_Info.objects.get(file_name = image_file, graph_name = graph_name)
+	y_min = float(graph_data.y_min)
+	y_max = float(graph_data.y_max)
 	context = {
 		'galaxy_image' : galaxy_image,
 		'distance_graph' : distance_graph,
 		'image_file' : image_file,
 		'graph_num' : 1,
-		'graph_count' : graph_count
+		'graph_count' : graph_count,
+		'y_min' : y_min,
+		'y_max' : y_max
 	}
 
-	return render(request, 'galaxy/index.html', context)
-
+	return HttpResponse(json.dumps(context), content_type="application/json")
 
 def next(request, image_file, graph_num, graph_count):
 	galaxy_image = image_file+"/galaxy_rgb.png"
-	distance_graph = image_file+'/distance_graph_'+str(graph_num)+".png"
-	
+	graph_name = '/distance_graph_'+str(graph_num);
+	distance_graph = image_file + graph_name + ".png"
+	graph_data = Graph_Info.objects.get(file_name = image_file, graph_name = graph_name)
+	y_min = float(graph_data.y_min)
+	y_max = float(graph_data.y_max)
+
 	context = {
 		'galaxy_image' : galaxy_image,
 		'distance_graph' : distance_graph,
 		'image_file' : image_file,
 		'graph_num' : int(graph_num) + 1,
-		'graph_count' : graph_count
+		'graph_count' : graph_count,
+		'y_min' : y_min,
+		'y_max' : y_max
 	}
 	return HttpResponse(json.dumps(context), content_type="application/json")
 
@@ -144,16 +205,29 @@ def actionData(request, image_file, graph_num, graph_count, point_1_x, point_1_y
 	galaxy_image = image_file+"/galaxy_rgb.png"
 	graph_name = '/distance_graph_'+str(graph_num);
 	distance_graph = image_file+graph_name+".png"
-	graph_data = Graph_Info.objects.filter(file_name = image_file, graph_name = graph_name)
-	if graph_data:
-		print(graph_data.y_min)
+	graph_data = Graph_Info.objects.get(file_name = image_file, graph_name = graph_name)
+
+	graph_num_data = int(graph_num)-1
+
+	action = Action_Info(point_1_x = point_1_x, point_1_y = point_1_y, point_2_x = point_2_x, point_2_y = point_2_y, file_name=image_file, graph_num=graph_num_data)
+	action.save()
+
+	y_min  = float(graph_data.y_min)
+	y_max = float(graph_data.y_max)
+
+	print(point_1_x)
+	print(point_1_y)
+	print(point_2_x)
+	print(point_2_y)
 
 	context = {
 		'galaxy_image' : galaxy_image,
 		'distance_graph' : distance_graph,
 		'image_file' : image_file,
 		'graph_num' : int(graph_num) + 1,
-		'graph_count' : graph_count
+		'graph_count' : graph_count,
+		'y_min' : y_min,
+		'y_max' : y_max
 	}
 
 

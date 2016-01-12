@@ -16,11 +16,11 @@
                 How Do i use it? 
             </div>
             <div class="bench-01-02">
-                Several data  : <span id="graph-num"> {{graph_num}}</span> / {{graph_count}}
+                Several data  : <span id="graph-num"> </span> / <span id="graph-count"> </span>
             </div>
             <div class="bench-01-con">
                 <div class="bench-01-03">
-                	<div class="data-img" id="distance-graph" style="background: url('/static/data_image/{{distance_graph}}') no-repeat -55px -15px; background-size: 435px">
+                	<div class="data-img" id="distance-graph" style="background: url('/static/data_image/') no-repeat -55px -15px; background-size: 435px">
                 		<div class="click-cover">
                 			<div class="cover-wrap">
                 			</div>
@@ -30,7 +30,7 @@
                 	<!-- <img class="data-img" src="/static/data_image/{{distance_graph}}"/> -->
                 </div>
                 <div class="bench-01-04">
-                	<div class="data-img" id="galax-image" style="background: url('/static/data_image/{{galaxy_image}}') no-repeat -255px -150px"></div>
+                	<div class="data-img" id="galaxy-image" style="background: url('/static/data_image/{{galaxy_image}}') no-repeat -255px -150px"></div>
                 	<!-- <img class="data-img" src="/static/data_image/{{galaxy_image}}"/> -->
                 </div>
             </div>
@@ -50,33 +50,50 @@
 
 var Graph = new graphInfo();
 
+$(document).ready(function(){
+	// var graph_file = "{{image_file}}";
+	// var graph_num = "{{graph_num}}";
+	// var graph_count = "{{graph_count}}";
+	// var y_min = {{y_min}};
+	// var y_max = {{y_max}};
+	//Graph.setData(graph_file, graph_num, graph_count, y_min, y_max)
+	Graph.setGraph();
+});
+
+
 $(function(){
 	$(".btn-skip").on("click", function(){
-		var graph_file = "{{image_file}}";
-		var graph_num = "{{graph_num}}";
-		var graph_count = "{{graph_count}}";
+		var graph_file =Graph.graph_file;
+		var graph_num = Graph.graph_num;
+		var graph_count = Graph.graph_count;
+		var y_min = Graph.y_min;
+		var y_max = Graph.y_max;
 		Graph.clearGraph();
 
 		if(!Graph.graph_file){
-			Graph.setData(graph_file, graph_num, graph_count)
+			Graph.setData(graph_file, graph_num, graph_count, y_min, y_max)
 		}
 
 		if(parseInt(Graph.graph_num) == parseInt(Graph.graph_count)){
-			$(".btn-skip").attr("disabled", "disabled");
-			location.href = "/galaxy";
-			return ;
+			if(confirm("Data set completed. Would you like to go to next data set?")){
+				$(".btn-skip").attr("disabled", "disabled");
+				location.href = "/galaxy";
+				return ;
+			}	
 		}
 
 		Graph.callNext();
 	});
 
 	$(".btn-save").on("click", function(){
-		var graph_file = "{{image_file}}";
-		var graph_num = "{{graph_num}}";
-		var graph_count = "{{graph_count}}";
+		var graph_file =Graph.graph_file;
+		var graph_num = Graph.graph_num;
+		var graph_count = Graph.graph_count;
+		var y_min = Graph.y_min;
+		var y_max = Graph.y_max;
 		
 		if(!Graph.graph_file){
-			Graph.setData(graph_file, graph_num, graph_count)
+			Graph.setData(graph_file, graph_num, graph_count, y_min, y_max)
 		}
 
 		if($(".marker").length < 2){
@@ -85,9 +102,11 @@ $(function(){
 		}
 
 		if(parseInt(Graph.graph_num) == parseInt(Graph.graph_count)){
-			$(".btn-save").attr("disabled", "disabled");
-			location.href = "/galaxy";
-			return ;
+			if(confirm("Data set completed. Would you like to go to next data set?")){
+				$(".btn-save").attr("disabled", "disabled");
+				location.href = "/galaxy";
+				return ;
+			}
 		}
 		Graph.callSave();
 
