@@ -8,6 +8,51 @@ var graphInfo = function(){
 };
 
 graphInfo.prototype = {
+	init : function(){
+		var self = this;
+		self.setGraph();
+		$(".btn-skip").on("click", function(){
+			if(parseInt(self.graph_num) == parseInt(self.graph_count)){
+				if(confirm("Data set completed. Would you like to go to next data set?")){
+					$(".btn-skip").attr("disabled", "disabled");
+					location.href = "/galaxy";
+					return ;
+				}	
+			}
+
+			self.callNext();
+		});
+
+		$(".btn-save").on("click", function(){
+			if($(".marker").length < 2){
+				alert("You must pick 2 highest points.");
+				return ;
+			}
+
+			if(parseInt(self.graph_num) == parseInt(self.graph_count)){
+				if(confirm("Data set completed. Would you like to go to next data set?")){
+					$(".btn-save").attr("disabled", "disabled");
+					location.href = "/galaxy";
+					return ;
+				}
+			}
+			self.callSave();
+			self.clearGraph();
+		});
+
+		$(".cover-wrap").on("click", function(e){
+			if($(".marker").length >=2 ){
+				alert("You must pick 2 highest points.");
+				return ;
+			}
+			self.drawMarker(e);
+		});
+
+		$(".btn-retry").on("click", function(){
+			self.clearGraph();
+		})
+	},
+
 	setData : function(graph_file, graph_num, graph_count, y_min, y_max){
 		this.graph_file = graph_file;
 		this.graph_num = graph_num;
@@ -50,6 +95,7 @@ graphInfo.prototype = {
 
 	setGraph : function(){
 		var self = this
+		self.loading();
 		var url = "/galaxy/data";
 		$.ajax({
 			type: "GET",
@@ -63,6 +109,7 @@ graphInfo.prototype = {
 				$("#graph-count").html(data.graph_count);
 				$("#graph-num").html(data.graph_num);
 				self.setData(data.image_file, data.graph_num, data.graph_count, data.y_min, data.y_max);
+				self.loadingComplete()
 			}
 		});
 	},
@@ -112,6 +159,14 @@ graphInfo.prototype = {
 
 	clearData : function(){
 		this.points = [];
-	}
+	},
 
+	loading : function(){
+		$(".loading-bar").addClass("show");
+	},
+
+	loadingComplete : function(){
+		$(".loading-bar").removeClass("show");
+	}
 };
+

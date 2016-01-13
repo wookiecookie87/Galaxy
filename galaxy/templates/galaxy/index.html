@@ -3,6 +3,9 @@
 
 <div class="body">
     <div class="bench">
+    	<div class="loading-bar">
+    		LOADING DATA...
+    	</div>
         <div class="bench-01-tit">
             <h1>Finding Galctic Warps</h1>
             <p>
@@ -51,78 +54,6 @@
 var Graph = new graphInfo();
 
 $(document).ready(function(){
-	// var graph_file = "{{image_file}}";
-	// var graph_num = "{{graph_num}}";
-	// var graph_count = "{{graph_count}}";
-	// var y_min = {{y_min}};
-	// var y_max = {{y_max}};
-	//Graph.setData(graph_file, graph_num, graph_count, y_min, y_max)
-	Graph.setGraph();
-});
-
-
-$(function(){
-	$(".btn-skip").on("click", function(){
-		var graph_file =Graph.graph_file;
-		var graph_num = Graph.graph_num;
-		var graph_count = Graph.graph_count;
-		var y_min = Graph.y_min;
-		var y_max = Graph.y_max;
-		Graph.clearGraph();
-
-		if(!Graph.graph_file){
-			Graph.setData(graph_file, graph_num, graph_count, y_min, y_max)
-		}
-
-		if(parseInt(Graph.graph_num) == parseInt(Graph.graph_count)){
-			if(confirm("Data set completed. Would you like to go to next data set?")){
-				$(".btn-skip").attr("disabled", "disabled");
-				location.href = "/galaxy";
-				return ;
-			}	
-		}
-
-		Graph.callNext();
-	});
-
-	$(".btn-save").on("click", function(){
-		var graph_file =Graph.graph_file;
-		var graph_num = Graph.graph_num;
-		var graph_count = Graph.graph_count;
-		var y_min = Graph.y_min;
-		var y_max = Graph.y_max;
-		
-		if(!Graph.graph_file){
-			Graph.setData(graph_file, graph_num, graph_count, y_min, y_max)
-		}
-
-		if($(".marker").length < 2){
-			alert("You must pick 2 highest points.");
-			return ;
-		}
-
-		if(parseInt(Graph.graph_num) == parseInt(Graph.graph_count)){
-			if(confirm("Data set completed. Would you like to go to next data set?")){
-				$(".btn-save").attr("disabled", "disabled");
-				location.href = "/galaxy";
-				return ;
-			}
-		}
-		Graph.callSave();
-
-		Graph.clearGraph();
-	});
-
-	$(".cover-wrap").on("click", function(e){
-		if($(".marker").length >=2 ){
-			alert("You must pick 2 highest points.");
-			return ;
-		}
-		Graph.drawMarker(e);
-	});
-
-	$(".btn-retry").on("click", function(){
-		Graph.clearGraph();
-	})
+	Graph.init();
 });
 </script>
