@@ -28,6 +28,21 @@ h1 {
     background-color: #dcdddf;
     margin: 0 auto;
     padding: 14px 21px;
+    position: relative;
+}
+
+.loading-bar {
+    font-weight: 700;
+    font-size: 40px;
+    position: absolute;
+    top:250px;
+    left: 200px;
+    display: none;
+    z-index: 5;
+}
+
+.loading-bar.show {
+    display: block;
 }
 
 .report-tit {
