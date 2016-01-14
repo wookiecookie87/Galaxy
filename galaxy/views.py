@@ -29,11 +29,11 @@ def get_center(ctr):
 
 #ct = get_center(ctr)
 
-def get_radian(center, point):
+def get_degree(center, point):
 	x = point[0] - center[0]
 	y = point[1] - center[1]
 	rad = np.arctan2(y, x);
-	return rad if rad > 0 else np.pi * 2 + rad
+	return np.degrees(rad) if rad > 0 else np.degrees(np.pi * 2 + rad)
 
 def get_distance(center, point):
 	return np.sqrt(np.square(center[0] - point[0]) + np.square(center[1]-point[1]))
@@ -49,7 +49,7 @@ def draw_dgree_distance(n, ctr, ct):
 	y = []
 	for s in ctr.allsegs[n]:
 		for d in s:
-			x.append(get_radian(ct,d))
+			x.append(get_degree(ct,d))
 			y.append(get_distance(ct,d))
 		df = pd.DataFrame({"x":x, "y":y}).sort_values("x")
 		plt.plot(df["x"], df["y"])
@@ -58,7 +58,9 @@ def createGraph(ctr, saveUrl):
 	ct = get_center(ctr)
 	y_axis_min = []
 	y_axis_max = []
-	graph_name = []
+	x_axis_min = []
+	x_axis_max = []
+	graph_name = []	
 	for i in range(len(ctr.allsegs)):
 		draw_dgree_distance(i, ctr, ct);
 		graph_num = "/distance_graph_"+str(i)
@@ -68,7 +70,9 @@ def createGraph(ctr, saveUrl):
 		graph_name.append(graph_num)
 		y_axis_min.append(axes.get_ylim()[0])
 		y_axis_max.append(axes.get_ylim()[1])
-	return {"y_min" : y_axis_min, "y_max" : y_axis_max, "graph_name" : graph_name}
+		x_axis_min.append(axes.get_xlim()[0])
+		x_axis_max.append(axes.get_xlim()[1])
+	return {"y_min" : y_axis_min, "y_max" : y_axis_max, "x_min" : x_axis_min, "x_max" : x_axis_max, "graph_name" : graph_name}
 
 
 
@@ -87,54 +91,13 @@ def computeData(saveUrl, fileUrl):
 	graph_info = createGraph(ctr, saveUrl)
 	y_min = graph_info["y_min"]
 	y_max = graph_info["y_max"]
+	x_min = graph_info["x_min"]
+	x_max = graph_info["x_max"]
 	graph_name = graph_info["graph_name"]
-	return {"len" : len(ctr.allsegs), "graph_name" : graph_name, "y_min" : y_min, "y_max" : y_max}
+	return {"len" : len(ctr.allsegs), "graph_name" : graph_name, "y_min" : y_min, "y_max" : y_max, "x_min" : x_min, "x_max" : x_max}
 
 def index(request):
-	# CURR_PATH = os.path.dirname(os.path.realpath(__file__))
-	# data_path = os.path.dirname(os.path.realpath(__file__))+"/data"
-	# for f in listdir(CURR_PATH+"/data"):
-	# 	fileName = f.split(".")
-	# 	image = Galaxy_Image(file_name = fileName[0], computed = "false")
-	# 	image.save()
-	# randNum = randint(3224, 4692)
-	# image_file = Galaxy_Image.objects.get(id=randNum).file_name
-	# file_url = data_path+"/"+image_file+".fits"
-	# save_url = CURR_PATH+"/static/data_image/"+image_file
-	# graph_count = 0
-	# y_min = 0.0
-	# y_max = 0.0
-	# if(Graph_Info.objects.filter(file_name=image_file)):
-	# 	print("it is already computed")
-	# else:
-	# 	print(save_url)
-	# 	graph_info = computeData(save_url, file_url)
-	# 	y_min = graph_info["y_min"]
-	# 	y_max = graph_info["y_max"]
-	# 	graph_name = graph_info["graph_name"]
-	# 	graph_count = graph_info["len"]
-	# 	for i in range(graph_info["len"]):
-	# 		print("graph_name = "+graph_name[i]+"y_min = " + str(y_min[i])+"y_max = "+ str(y_max[i]))
-	# 		graph = Graph_Info(file_name=image_file, graph_count=graph_count, graph_name=graph_name[i], y_min=y_min[i], y_max=y_max[i])
-	# 		graph.save()
-	
-	# galaxy_image = image_file+"/galaxy_rgb.png"
-	# graph_name = "/distance_graph_0"
-	# distance_graph = image_file+graph_name+".png"
-	# graph_data = Graph_Info.objects.get(file_name = image_file, graph_name = graph_name)
-	# y_min = float(graph_data.y_min)
-	# y_max = float(graph_data.y_max)
-	context = {
-		# 'galaxy_image' : galaxy_image,
-		# 'distance_graph' : distance_graph,
-		# 'image_file' : image_file,
-		# 'graph_num' : 1,
-		# 'graph_count' : graph_count,
-		# 'y_min' : y_min,
-		# 'y_max' : y_max
-	}
-
-	return render(request, 'galaxy/index.html', context)
+	return render(request, 'galaxy/index.html')
 
 
 def loadData(request):
@@ -156,12 +119,14 @@ def loadData(request):
 	else:
 		print(save_url)
 		graph_info = computeData(save_url, file_url)
+		x_min = graph_info["x_min"]
+		x_max = graph_info["x_max"]
 		y_min = graph_info["y_min"]
 		y_max = graph_info["y_max"]
 		graph_name = graph_info["graph_name"]
 		graph_count = graph_info["len"]
 		for i in range(graph_info["len"]):
-			graph = Graph_Info(file_name=image_file, graph_count=graph_count, graph_name=graph_name[i], y_min=y_min[i], y_max=y_max[i])
+			graph = Graph_Info(file_name=image_file, graph_count=graph_count, graph_name=graph_name[i], y_min=y_min[i], y_max=y_max[i], x_min=x_min[i], x_max=x_max[i])
 			graph.save()
 	
 	galaxy_image = image_file+"/galaxy_rgb.png"
@@ -170,6 +135,8 @@ def loadData(request):
 	graph_data = Graph_Info.objects.get(file_name = image_file, graph_name = graph_name)
 	y_min = float(graph_data.y_min)
 	y_max = float(graph_data.y_max)
+	x_min = int(graph_data.x_min)
+	x_max = int(graph_data.x_max)
 	context = {
 		'galaxy_image' : galaxy_image,
 		'distance_graph' : distance_graph,
@@ -177,7 +144,9 @@ def loadData(request):
 		'graph_num' : 1,
 		'graph_count' : graph_count,
 		'y_min' : y_min,
-		'y_max' : y_max
+		'y_max' : y_max,
+		'x_min' : x_min,
+		'x_max' : x_max
 	}
 
 	return HttpResponse(json.dumps(context), content_type="application/json")
@@ -189,7 +158,8 @@ def next(request, image_file, graph_num, graph_count):
 	graph_data = Graph_Info.objects.get(file_name = image_file, graph_name = graph_name)
 	y_min = float(graph_data.y_min)
 	y_max = float(graph_data.y_max)
-
+	x_min = int(graph_data.x_min)
+	x_max = int(graph_data.x_max)
 	context = {
 		'galaxy_image' : galaxy_image,
 		'distance_graph' : distance_graph,
@@ -197,7 +167,9 @@ def next(request, image_file, graph_num, graph_count):
 		'graph_num' : int(graph_num) + 1,
 		'graph_count' : graph_count,
 		'y_min' : y_min,
-		'y_max' : y_max
+		'y_max' : y_max,
+		'x_min' : x_min,
+		'x_max' : x_max
 	}
 	return HttpResponse(json.dumps(context), content_type="application/json")
 
@@ -214,12 +186,8 @@ def actionData(request, image_file, graph_num, graph_count, point_1_x, point_1_y
 
 	y_min  = float(graph_data.y_min)
 	y_max = float(graph_data.y_max)
-
-	print(point_1_x)
-	print(point_1_y)
-	print(point_2_x)
-	print(point_2_y)
-
+	x_min = int(graph_data.x_min)
+	x_max = int(graph_data.x_max)
 	context = {
 		'galaxy_image' : galaxy_image,
 		'distance_graph' : distance_graph,
@@ -227,7 +195,9 @@ def actionData(request, image_file, graph_num, graph_count, point_1_x, point_1_y
 		'graph_num' : int(graph_num) + 1,
 		'graph_count' : graph_count,
 		'y_min' : y_min,
-		'y_max' : y_max
+		'y_max' : y_max,
+		'x_min' : x_min,
+		'x_max' : x_max
 	}
 
 

@@ -51,6 +51,8 @@ class Graph_Info(models.Model):
 	graph_name = models.CharField(max_length=300)
 	y_min = models.DecimalField(max_digits=6, decimal_places=2)
 	y_max = models.DecimalField(max_digits=6, decimal_places=2)
+	x_min = models.IntegerField()
+	x_max = models.IntegerField()
 
 	def __str__(self):
 		return {"y_min" : self.y_min, "y_max" : self.y_max}
